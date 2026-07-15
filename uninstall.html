@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Draw on Page - goodbye</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✏️</text></svg>">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+    background:
+      radial-gradient(900px 520px at 50% -120px, rgba(124,92,255,.28) 0%, transparent 65%),
+      #0b0912;
+    color: #e8e4f8;
+    min-height: 100vh;
+    padding: 88px 20px 40px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .langs {
+    position: fixed; top: 18px; right: 22px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .globe { opacity: .5; margin-right: 2px; }
+  .lang {
+    background: transparent; color: #8f86b3;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 999px; padding: 5px 14px;
+    font: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+  }
+  .lang:hover { color: #cfc8e8; }
+  .lang.active {
+    background: rgba(124,92,255,.18);
+    border-color: #7c5cff; color: #c4b5fd;
+  }
+
+  main { width: 100%; max-width: 660px; text-align: center; }
+
+  .tagline {
+    font-size: 13px; font-weight: 800; letter-spacing: 2px;
+    color: #a78bfa; margin-bottom: 18px; text-transform: uppercase;
+  }
+  h1 {
+    font-size: clamp(38px, 7vw, 62px); font-weight: 800;
+    letter-spacing: -.03em; margin-bottom: 16px; line-height: 1.05;
+  }
+  .sub { font-size: 16px; color: #a79dcc; line-height: 1.6; margin-bottom: 40px; }
+
+  .card {
+    background: rgba(26, 22, 45, .72);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 18px;
+    padding: 26px;
+    text-align: left;
+    margin-bottom: 34px;
+  }
+  .card h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .card p { font-size: 13.5px; color: #8f86b3; margin-bottom: 20px; }
+
+  .reasons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 560px) { .reasons { grid-template-columns: 1fr; } }
+  .reason {
+    background: rgba(255,255,255,.045);
+    border: 1px solid rgba(255,255,255,.08);
+    color: #e8e4f8;
+    border-radius: 11px;
+    padding: 15px 18px;
+    font: inherit; font-size: 14px; font-weight: 600;
+    text-align: left; cursor: pointer;
+    transition: background .14s, border-color .14s, transform .1s;
+  }
+  .reason:hover {
+    background: rgba(124,92,255,.16);
+    border-color: rgba(124,92,255,.55);
+  }
+  .reason:active { transform: scale(.985); }
+  .reason:disabled { opacity: .35; cursor: default; }
+
+  .thanks { display: none; text-align: center; padding: 22px 8px 8px; }
+  .thanks.show { display: block; }
+  .thanks .check { font-size: 46px; margin-bottom: 12px; }
+  .thanks h3 { font-size: 20px; font-weight: 700; color: #4ade80; margin-bottom: 8px; }
+  .thanks p { font-size: 14px; color: #8f86b3; margin: 0; }
+
+  .cta-label { font-size: 14px; color: #a79dcc; margin-bottom: 14px; }
+  .cta {
+    display: inline-block;
+    background: linear-gradient(135deg, #7c5cff, #a855f7);
+    color: #fff; text-decoration: none;
+    font-size: 15px; font-weight: 700;
+    border-radius: 999px; padding: 15px 34px;
+    box-shadow: 0 8px 30px rgba(124,92,255,.45);
+    transition: filter .14s, transform .1s;
+  }
+  .cta:hover { filter: brightness(1.1); }
+  .cta:active { transform: scale(.98); }
+
+  footer {
+    margin-top: 52px; font-size: 12.5px; color: #5f5883;
+  }
+  footer a { color: #8f86b3; text-decoration: none; }
+  footer a:hover { color: #c4b5fd; }
+</style>
+</head>
+<body>
+  <div class="langs">
+    <span class="globe">🌐</span>
+    <button class="lang" data-lang="en">EN</button>
+    <button class="lang" data-lang="pl">PL</button>
+  </div>
+
+  <main>
+    <div class="tagline" data-i18n="tagline"></div>
+    <h1 data-i18n="title"></h1>
+    <p class="sub" data-i18n="sub"></p>
+
+    <div class="card">
+      <div id="form-area">
+        <h2 data-i18n="why"></h2>
+        <p data-i18n="why_sub"></p>
+        <div class="reasons" id="reasons"></div>
+      </div>
+      <div class="thanks" id="thanks">
+        <div class="check">✅</div>
+        <h3 data-i18n="thanks_title"></h3>
+        <p data-i18n="thanks_sub"></p>
+      </div>
+    </div>
+
+    <div class="cta-label" data-i18n="cta_label"></div>
+    <a class="cta" id="reinstall" href="#" data-i18n="cta"></a>
+
+    <footer>
+      Draw on Page &middot; &copy; 2026 romanzbudowy &middot;
+      <a href="https://buymeacoffee.com/romanzbudowy" target="_blank" rel="noopener">Buy me a coffee</a>
+    </footer>
+  </main>
+
+<script>
+const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfxYXDr5FtlULxvAiImaRsGT-uPf0AQRH5g9uUDM_7srHnO9Q/formResponse";
+const FORM_ENTRY = "entry.2086043965";
+const STORE_URL = "https://chromewebstore.google.com/";
+
+const T = {
+  en: {
+    tagline: "Draw it, son!",
+    title: "Sorry to see you go",
+    sub: "The extension is fully removed. It never collected anything, so there is nothing left behind: no data, no accounts, no traces.",
+    why: "Mind telling us why?",
+    why_sub: "One click is enough. It sends anonymously - no account, no sign-in, nothing else to do.",
+    r_broken: "Did not work on a site I use",
+    r_complex: "Too complicated to use",
+    r_missing: "Missing a feature I needed",
+    r_better: "I found a better extension",
+    r_testing: "I was just testing it",
+    r_other: "Other reason",
+    thanks_title: "Thanks, that helps!",
+    thanks_sub: "Your answer was sent anonymously. Good luck out there.",
+    cta_label: "Changed your mind or removed it by accident?",
+    cta: "Reinstall from the Chrome Web Store"
+  },
+  pl: {
+    tagline: "Draw it, son!",
+    title: "Szkoda, że odchodzisz",
+    sub: "Wtyczka została w pełni usunięta. Nigdy niczego nie zbierała, więc nic po niej nie zostało: żadnych danych, kont ani śladów.",
+    why: "Powiesz nam dlaczego?",
+    why_sub: "Wystarczy jedno kliknięcie. Wysyła się anonimowo - bez konta, bez logowania, nic więcej nie trzeba robić.",
+    r_broken: "Nie działała na stronie, której używam",
+    r_complex: "Zbyt skomplikowana w obsłudze",
+    r_missing: "Brakowało funkcji, której potrzebowałem",
+    r_better: "Znalazłem lepszą wtyczkę",
+    r_testing: "Tylko ją testowałem",
+    r_other: "Inny powód",
+    thanks_title: "Dzięki, to pomaga!",
+    thanks_sub: "Twoja odpowiedź została wysłana anonimowo. Powodzenia!",
+    cta_label: "Zmieniłeś zdanie albo usunąłeś przez przypadek?",
+    cta: "Zainstaluj ponownie z Chrome Web Store"
+  }
+};
+
+const REASONS = [
+  ["r_broken", "Did not work on a site I use"],
+  ["r_complex", "Too complicated to use"],
+  ["r_missing", "Missing a feature I needed"],
+  ["r_better", "I found a better extension"],
+  ["r_testing", "I was just testing it"],
+  ["r_other", "Other reason"]
+];
+
+const params = new URLSearchParams(location.search);
+const version = params.get("v") || "unknown";
+let lang = (navigator.language || "en").toLowerCase().startsWith("pl") ? "pl" : "en";
+let sent = false;
+
+document.getElementById("reinstall").href = STORE_URL;
+
+function render() {
+  const d = T[lang];
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const v = d[el.dataset.i18n];
+    if (v) el.textContent = v;
+  });
+  document.documentElement.lang = lang;
+  document.querySelectorAll(".lang").forEach(b => {
+    b.classList.toggle("active", b.dataset.lang === lang);
+  });
+  const wrap = document.getElementById("reasons");
+  wrap.replaceChildren();
+  REASONS.forEach(([key, canonical]) => {
+    const b = document.createElement("button");
+    b.className = "reason";
+    b.textContent = d[key];
+    b.disabled = sent;
+    b.addEventListener("click", () => send(canonical));
+    wrap.appendChild(b);
+  });
+}
+
+function send(canonical) {
+  if (sent) return;
+  sent = true;
+  document.querySelectorAll(".reason").forEach(b => b.disabled = true);
+  const body = FORM_ENTRY + "=" + encodeURIComponent("[UNINSTALL v" + version + "] " + canonical);
+  fetch(FORM_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: body
+  }).catch(() => {});
+  document.getElementById("form-area").style.display = "none";
+  document.getElementById("thanks").classList.add("show");
+}
+
+document.querySelectorAll(".lang").forEach(b => {
+  b.addEventListener("click", () => { lang = b.dataset.lang; render(); });
+});
+
+render();
+</script>
+</body>
+</html>

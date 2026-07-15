@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title data-i18n="opt_title"></title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <main>
+    <header>
+      <img src="icons/icon48.png" alt="" width="42" height="42">
+      <div>
+        <h1 data-i18n="opt_title"></h1>
+        <span class="ver" id="version"></span>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2 data-i18n="sec_general"></h2>
+
+      <div class="row">
+        <label data-i18n="language"></label>
+        <select id="lang">
+          <option value="en">English</option>
+          <option value="pl">Polski</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label data-i18n="text_size"></label>
+        <div class="slider-wrap">
+          <input type="range" id="fontSize" min="12" max="64">
+          <output id="fontSize-out"></output>
+        </div>
+      </div>
+
+      <div class="row">
+        <label data-i18n="radius"></label>
+        <div class="slider-wrap">
+          <input type="range" id="radius" min="0" max="24">
+          <output id="radius-out"></output>
+        </div>
+      </div>
+
+      <div class="row toggle" data-key="showHints">
+        <label data-i18n="show_hints"></label>
+        <div class="switch"></div>
+      </div>
+
+      <div class="row toggle" data-key="smoothPen">
+        <label data-i18n="smooth_pen"></label>
+        <div class="switch"></div>
+      </div>
+
+      <div class="row toggle" data-key="persist">
+        <label data-i18n="persist"></label>
+        <div class="switch"></div>
+      </div>
+
+      <div class="actions">
+        <button id="reset" class="secondary" data-i18n="reset"></button>
+        <span id="reset-status"></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="sec_keys"></h2>
+      <p data-i18n="keys_desc"></p>
+      <div id="keys"></div>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="bug_title"></h2>
+      <p data-i18n="bug_desc"></p>
+      <textarea id="bug-text" maxlength="2000" rows="5" data-i18n-placeholder="bug_placeholder"></textarea>
+      <div class="actions">
+        <button id="bug-send" data-i18n="bug_send"></button>
+        <span id="bug-status"></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="support_title"></h2>
+      <p data-i18n="support_text"></p>
+      <a class="coffee" href="https://buymeacoffee.com/romanzbudowy" target="_blank" rel="noopener">☕ <span data-i18n="coffee"></span></a>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="privacy_title"></h2>
+      <p data-i18n="privacy_text"></p>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="about_title"></h2>
+      <p data-i18n="about_text"></p>
+    </section>
+  </main>
+  <script src="i18n.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>

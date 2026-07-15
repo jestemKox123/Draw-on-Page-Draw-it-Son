@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Draw on Page</title>
+  <link rel="stylesheet" href="welcome.css">
+</head>
+<body>
+  <main>
+    <div class="hero">
+      <img src="icons/icon128.png" alt="" width="88" height="88">
+      <h1 data-i18n="welcome_title"></h1>
+      <p class="tagline" data-i18n="tagline"></p>
+      <p class="sub" data-i18n="welcome_sub"></p>
+      <div class="langs">
+        <button class="lang" data-lang="en">English</button>
+        <button class="lang" data-lang="pl">Polski</button>
+      </div>
+    </div>
+
+    <section class="card">
+      <h2 data-i18n="welcome_how"></h2>
+      <ol>
+        <li data-i18n="welcome_step1"></li>
+        <li data-i18n="welcome_step2"></li>
+        <li data-i18n="welcome_step3"></li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="welcome_shortcuts"></h2>
+      <div class="chips">
+        <span class="chip"><b>Alt+A</b><i data-i18n="app_name"></i></span>
+        <span class="chip"><b>R</b><i data-i18n="tool_rect"></i></span>
+        <span class="chip"><b>A</b><i data-i18n="tool_arrow"></i></span>
+        <span class="chip"><b>P</b><i data-i18n="tool_pen"></i></span>
+        <span class="chip"><b>T</b><i data-i18n="tool_text"></i></span>
+        <span class="chip"><b>S</b><i data-i18n="key_settings"></i></span>
+        <span class="chip"><b>F</b><i data-i18n="key_hidehud"></i></span>
+        <span class="chip"><b>Esc</b><i data-i18n="close"></i></span>
+      </div>
+    </section>
+
+    <section class="card privacy">
+      <h2 data-i18n="privacy_title"></h2>
+      <p data-i18n="welcome_privacy"></p>
+    </section>
+
+    <div class="cta">
+      <button id="open-settings" data-i18n="welcome_open_settings"></button>
+      <a class="coffee" href="https://buymeacoffee.com/romanzbudowy" target="_blank" rel="noopener">☕ <span data-i18n="coffee"></span></a>
+    </div>
+
+    <footer data-i18n="about_text"></footer>
+  </main>
+  <script src="i18n.js"></script>
+  <script src="welcome.js"></script>
+</body>
+</html>

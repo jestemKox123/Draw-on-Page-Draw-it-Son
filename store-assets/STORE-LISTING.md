@@ -111,8 +111,23 @@ Gotowy tekst jest w pliku wtyczki `PRIVACY.md`. Wklej go do Google Docs (Udostę
 
 ---
 
-## 8. Zrzuty ekranu
+## 8. Zasoby graficzne — GOTOWE PLIKI
 
-Otwórz plik `store-assets/promo.html` w Chrome (zoom 100%). Każdy kafelek ma dokładnie **1280×800 px** — zrób zrzut każdego (lub użyj narzędzia do przechwytywania obszaru). Wgraj 3–5 z nich jako screenshoty listingu.
+Wszystko wyrenderowane i gotowe do wgrania — folder **`store-assets/png/`**. Każdy plik jest w wymaganym formacie: **24-bitowy PNG bez kanału alfa**.
 
-Wymagania Chrome Web Store: min. 1 zrzut, format 1280×800 lub 640×400 (PNG/JPG).
+| Pole w panelu | Plik | Wymiary |
+|---|---|---|
+| Zrzuty ekranu (1/5) | `screenshot-1-hero.png` | 1280×800 |
+| Zrzuty ekranu (2/5) | `screenshot-2-tools.png` | 1280×800 |
+| Zrzuty ekranu (3/5) | `screenshot-3-blur-pins.png` | 1280×800 |
+| Zrzuty ekranu (4/5) | `screenshot-4-capture.png` | 1280×800 |
+| Zrzuty ekranu (5/5) | `screenshot-5-privacy.png` | 1280×800 |
+| Mały obraz promocji | `promo-small-440x280.png` | 440×280 |
+| Transparent promocyjny | `promo-marquee-1400x560.png` | 1400×560 |
+| Ikona sklepu | `../draw-on-page/icons/icon128.png` | 128×128 |
+
+**Kolejność zrzutów ma znaczenie** — pierwszy jest miniaturą w wynikach wyszukiwania, więc `screenshot-1-hero.png` powinien iść jako pierwszy.
+
+### Jak je zregenerować po zmianach
+
+Źródłem jest `store-assets/assets.html` (jeden plik, slajd wybierany przez `?s=s1..s5`, `?s=tile`, `?s=marquee`). Renderowanie: headless Chrome ze `--window-size` równym docelowym wymiarom + `--screenshot`, potem `ffmpeg -pix_fmt rgb24` żeby usunąć kanał alfa (sklep odrzuca PNG z alfą).

@@ -67,11 +67,18 @@ Konfiguracja GitHub Pages: Settings → Pages → Source: `main`, folder `/docs`
 
 ## Struktura repozytorium
 
+Repozytorium zawiera **wyłącznie wtyczkę i to, co jest potrzebne do jej działania**:
+
 ```
-draw-on-page/     ← ten folder = paczka wtyczki (to się pakuje do ZIP)
-docs/             ← GitHub Pages: uninstall.html
-store-assets/     ← materiały do Chrome Web Store (opis, zrzuty) — nie trafia do paczki
+manifest.json, *.js, *.html, *.css   ← wtyczka (to się pakuje do ZIP)
+icons/                               ← ikony
+_locales/en, _locales/pl             ← tłumaczenia nazwy i opisu
+uninstall.html                       ← strona pożegnalna (GitHub Pages, źródło z /root)
+LICENSE, PRIVACY.md,                 ← dokumenty projektu
+THIRD-PARTY-NOTICES.txt
 ```
+
+Materiały do listingu w Chrome Web Store (opisy, zrzuty promocyjne, szablon grafik) **celowo nie są w repo** — to zasoby jednorazowe, potrzebne tylko przy wgrywaniu do sklepu, a wygenerowane PNG-i to pliki wtórne. Trzymane są lokalnie w `store-assets/` i są w `.gitignore`.
 
 ## Prywatność
 

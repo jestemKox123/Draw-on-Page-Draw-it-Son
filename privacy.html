@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Draw on Page - Privacy Policy</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✏️</text></svg>">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+    background:
+      radial-gradient(900px 460px at 50% -140px, rgba(124,92,255,.26) 0%, transparent 66%),
+      #0b0912;
+    color: #d8d2ee;
+    min-height: 100vh;
+    padding: 80px 20px 70px;
+    line-height: 1.65;
+  }
+  .langs { position: fixed; top: 18px; right: 22px; display: flex; align-items: center; gap: 6px; }
+  .globe { opacity: .5; }
+  .lang {
+    background: transparent; color: #8f86b3;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 999px; padding: 5px 14px;
+    font: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+  }
+  .lang:hover { color: #cfc8e8; }
+  .lang.active { background: rgba(124,92,255,.18); border-color: #7c5cff; color: #c4b5fd; }
+
+  main { max-width: 720px; margin: 0 auto; }
+  .tagline {
+    font-size: 12px; font-weight: 800; letter-spacing: 2.2px; text-transform: uppercase;
+    color: #a78bfa; margin-bottom: 12px;
+  }
+  h1 { font-size: 40px; font-weight: 800; letter-spacing: -.03em; color: #fff; margin-bottom: 8px; }
+  .updated { font-size: 13px; color: #6f6791; margin-bottom: 40px; }
+
+  .tldr {
+    background: rgba(124,92,255,.1);
+    border: 1px solid rgba(124,92,255,.32);
+    border-radius: 14px; padding: 22px 24px; margin-bottom: 40px;
+  }
+  .tldr h2 { font-size: 13px; letter-spacing: 1.4px; text-transform: uppercase; color: #a78bfa; margin-bottom: 12px; }
+  .tldr ul { list-style: none; }
+  .tldr li { font-size: 15px; color: #e0daf5; padding: 5px 0 5px 26px; position: relative; }
+  .tldr li::before { content: "✓"; position: absolute; left: 0; color: #4ade80; font-weight: 700; }
+
+  h2 { font-size: 20px; font-weight: 700; color: #fff; margin: 34px 0 12px; }
+  p { font-size: 15px; margin-bottom: 14px; }
+  ul.body { margin: 0 0 14px 20px; }
+  ul.body li { font-size: 15px; margin-bottom: 8px; }
+  strong { color: #fff; font-weight: 650; }
+  code {
+    background: rgba(255,255,255,.07); border-radius: 5px;
+    padding: 1px 6px; font-size: 13.5px; color: #c4b5fd;
+    font-family: ui-monospace, Consolas, monospace;
+  }
+  a { color: #a78bfa; }
+  a:hover { color: #c4b5fd; }
+
+  footer {
+    max-width: 720px; margin: 56px auto 0; padding-top: 26px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    font-size: 13px; color: #5f5883;
+  }
+  [data-lang] { display: none; }
+  [data-lang].on { display: block; }
+</style>
+</head>
+<body>
+  <div class="langs">
+    <span class="globe">🌐</span>
+    <button class="lang" data-set="en">EN</button>
+    <button class="lang" data-set="pl">PL</button>
+  </div>
+
+  <main>
+    <div class="tagline">Draw it, son.</div>
+
+    <!-- ENGLISH -->
+    <div data-lang="en">
+      <h1>Privacy Policy</h1>
+      <div class="updated">Draw on Page &middot; last updated 15 July 2026</div>
+
+      <div class="tldr">
+        <h2>The short version</h2>
+        <ul>
+          <li>No data is collected. None.</li>
+          <li>The extension cannot read the pages you visit.</li>
+          <li>It only runs on a page after you click its icon.</li>
+          <li>Your settings and drawings never leave your device.</li>
+          <li>No accounts, no tracking, no analytics, no ads.</li>
+        </ul>
+      </div>
+
+      <h2>What the extension can access</h2>
+      <p>Draw on Page uses Chrome's <code>activeTab</code> model. It has <strong>no standing permission to any website</strong> and cannot run in the background. It gains access to a single tab only at the moment you click its toolbar icon, and Chrome withdraws that access when you navigate away.</p>
+      <p>It draws an overlay on top of the current tab so you can add boxes, arrows, text and so on. It does <strong>not</strong> read, collect or transmit the content of the pages you visit.</p>
+
+      <h2>What is stored, and where</h2>
+      <ul class="body">
+        <li>Your settings (colors, thickness, opacity, language, keyboard shortcuts) are saved <strong>locally</strong> on your computer via <code>chrome.storage.local</code>.</li>
+        <li>If you switch on "Remember drawings on this page", your annotations are stored locally too, keyed by the page address. They stay on your device.</li>
+        <li>Screenshots you save are downloaded straight to your computer. They are never uploaded.</li>
+      </ul>
+      <p>None of this is sent to us or to anyone else. There is no server and no account system behind this extension.</p>
+
+      <h2>What leaves your device, and when</h2>
+      <p>Exactly two things, and both only because you clicked a button:</p>
+      <ul class="body">
+        <li><strong>A bug report.</strong> If you open the settings page, type a message under "Found a bug?" and press Send, that text (plus the extension's version number) is submitted to a private Google Form owned by the developer. It is <strong>anonymous</strong>: no account, no sign-in, no identifiers, no page data.</li>
+        <li><strong>An uninstall reason.</strong> If you remove the extension, Chrome opens a goodbye page. If you click one of the reasons there, that single choice is submitted to the same form, anonymously.</li>
+      </ul>
+      <p>Nothing is ever sent automatically. If you never touch either, the extension makes no network requests at all.</p>
+
+      <h2>Third parties</h2>
+      <p>Bug reports and uninstall reasons are delivered through Google Forms, which processes them under <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's privacy policy</a>. The extension also links to Buy Me a Coffee; opening that link takes you to an external site with its own policy.</p>
+
+      <h2>What is never collected</h2>
+      <p>No personal information, no browsing history, no page content, no cookies, no location, no analytics, no tracking, no advertising identifiers, no keystroke logging.</p>
+
+      <h2>Changes</h2>
+      <p>If this policy ever changes, the updated version will appear at this address with a new date.</p>
+
+      <h2>Contact</h2>
+      <p>Questions, or something here looks wrong? Open an issue on <a href="https://github.com/jestemKox123/Draw-on-Page-Draw-it-Son/issues" target="_blank" rel="noopener">GitHub</a>, or use the anonymous form inside the extension's settings.</p>
+    </div>
+
+    <!-- POLSKI -->
+    <div data-lang="pl">
+      <h1>Polityka prywatności</h1>
+      <div class="updated">Draw on Page &middot; ostatnia aktualizacja: 15 lipca 2026</div>
+
+      <div class="tldr">
+        <h2>W skrócie</h2>
+        <ul>
+          <li>Nie zbieramy żadnych danych. Zero.</li>
+          <li>Wtyczka nie może czytać odwiedzanych przez Ciebie stron.</li>
+          <li>Uruchamia się dopiero po kliknięciu jej ikony.</li>
+          <li>Ustawienia i rysunki nigdy nie opuszczają Twojego urządzenia.</li>
+          <li>Bez kont, śledzenia, analityki i reklam.</li>
+        </ul>
+      </div>
+
+      <h2>Do czego wtyczka ma dostęp</h2>
+      <p>Draw on Page działa w modelu <code>activeTab</code>. <strong>Nie ma stałego uprawnienia do żadnej strony</strong> i nie może działać w tle. Dostęp do jednej karty dostaje wyłącznie w chwili kliknięcia ikony, a Chrome odbiera go przy przejściu na inny adres.</p>
+      <p>Rysuje nakładkę na wierzchu bieżącej karty, byś mógł dodawać ramki, strzałki, tekst i tak dalej. <strong>Nie</strong> czyta, nie zbiera ani nie wysyła treści odwiedzanych stron.</p>
+
+      <h2>Co jest zapisywane i gdzie</h2>
+      <ul class="body">
+        <li>Twoje ustawienia (kolory, grubość, krycie, język, skróty klawiszowe) zapisywane są <strong>lokalnie</strong> na Twoim komputerze przez <code>chrome.storage.local</code>.</li>
+        <li>Jeśli włączysz „Zapamiętaj rysunki na tej stronie", adnotacje również zapisują się lokalnie, przypisane do adresu strony. Zostają na Twoim urządzeniu.</li>
+        <li>Zrzuty ekranu pobierają się prosto na Twój komputer. Nigdy nie są nigdzie wysyłane.</li>
+      </ul>
+      <p>Nic z tego nie trafia do nas ani do nikogo innego. Za tą wtyczką nie stoi żaden serwer ani system kont.</p>
+
+      <h2>Co opuszcza Twoje urządzenie i kiedy</h2>
+      <p>Dokładnie dwie rzeczy — obie wyłącznie dlatego, że kliknąłeś przycisk:</p>
+      <ul class="body">
+        <li><strong>Zgłoszenie błędu.</strong> Jeśli otworzysz stronę ustawień, wpiszesz wiadomość w polu „Znalazłeś błąd?" i klikniesz Wyślij, ten tekst (plus numer wersji wtyczki) trafia do prywatnego formularza Google należącego do autora. Jest <strong>anonimowy</strong>: bez konta, bez logowania, bez identyfikatorów, bez danych strony.</li>
+        <li><strong>Powód odinstalowania.</strong> Gdy usuniesz wtyczkę, Chrome otworzy stronę pożegnalną. Jeśli klikniesz tam jeden z powodów, ten pojedynczy wybór trafia do tego samego formularza, anonimowo.</li>
+      </ul>
+      <p>Nic nie jest wysyłane automatycznie. Jeśli nie skorzystasz z żadnej z tych dwóch rzeczy, wtyczka nie wykonuje żadnych zapytań sieciowych.</p>
+
+      <h2>Podmioty zewnętrzne</h2>
+      <p>Zgłoszenia błędów i powody odinstalowania przechodzą przez Formularze Google, przetwarzane zgodnie z <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">polityką prywatności Google</a>. Wtyczka zawiera też link do Buy Me a Coffee — jego otwarcie przenosi Cię na zewnętrzną stronę z własną polityką.</p>
+
+      <h2>Czego nigdy nie zbieramy</h2>
+      <p>Żadnych danych osobowych, historii przeglądania, treści stron, ciasteczek, lokalizacji, analityki, śledzenia, identyfikatorów reklamowych ani rejestrowania naciśnięć klawiszy.</p>
+
+      <h2>Zmiany</h2>
+      <p>Jeśli ta polityka kiedykolwiek się zmieni, zaktualizowana wersja pojawi się pod tym adresem z nową datą.</p>
+
+      <h2>Kontakt</h2>
+      <p>Pytania albo coś tu wygląda źle? Załóż zgłoszenie na <a href="https://github.com/jestemKox123/Draw-on-Page-Draw-it-Son/issues" target="_blank" rel="noopener">GitHubie</a> albo użyj anonimowego formularza w ustawieniach wtyczki.</p>
+    </div>
+  </main>
+
+  <footer>
+    Draw on Page &middot; &copy; 2026 romanzbudowy &middot;
+    <a href="https://github.com/jestemKox123/Draw-on-Page-Draw-it-Son" target="_blank" rel="noopener">GitHub</a>
+  </footer>
+
+<script>
+function setLang(l) {
+  document.querySelectorAll("[data-lang]").forEach(function (el) {
+    el.classList.toggle("on", el.dataset.lang === l);
+  });
+  document.querySelectorAll(".lang").forEach(function (b) {
+    b.classList.toggle("active", b.dataset.set === l);
+  });
+  document.documentElement.lang = l;
+}
+document.querySelectorAll(".lang").forEach(function (b) {
+  b.addEventListener("click", function () { setLang(b.dataset.set); });
+});
+setLang("en");
+</script>
+</body>
+</html>

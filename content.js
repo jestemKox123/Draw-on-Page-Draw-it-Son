@@ -937,6 +937,11 @@
       openNote = note;
       setTimeout(() => note.focus(), 0);
 
+      note.addEventListener("paste", (e) => {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData("text/plain");
+        document.execCommand("insertText", false, text);
+      });
       note.addEventListener("keydown", (e) => {
         e.stopPropagation();
         if (e.key === "Escape") { e.preventDefault(); commitOpenNote(); }
@@ -1060,7 +1065,12 @@
               tmp.innerHTML = html;
               const el = tmp.firstElementChild;
               if (!el) return;
-              if (el.classList.contains("note")) el.contentEditable = "false";
+              if (!el.classList.contains("note") && !el.classList.contains("blur")) return;
+              if (el.classList.contains("note")) {
+                el.contentEditable = "false";
+                el.textContent = el.textContent;
+              }
+              el.querySelectorAll("script, iframe, object, embed").forEach(n => n.remove());
               overlay.appendChild(el);
             });
           }

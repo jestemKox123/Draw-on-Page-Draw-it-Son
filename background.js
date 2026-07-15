@@ -3,7 +3,9 @@ const RESTRICTED = /^(chrome|edge|brave|opera|vivaldi|about|chrome-extension|moz
 const UNINSTALL_PAGE = "https://jestemkox123.github.io/Draw-on-Page-Draw-it-Son/uninstall.html";
 
 try {
-  chrome.runtime.setUninstallURL(UNINSTALL_PAGE + "?v=" + chrome.runtime.getManifest().version);
+  const params = new URLSearchParams({ v: chrome.runtime.getManifest().version });
+  if (chrome.runtime.id) params.set("id", chrome.runtime.id);
+  chrome.runtime.setUninstallURL(UNINSTALL_PAGE + "?" + params.toString());
 } catch (e) {
   console.warn("Draw on Page: could not set uninstall URL:", e);
 }

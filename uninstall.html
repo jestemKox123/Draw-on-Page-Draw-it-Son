@@ -141,7 +141,7 @@
 const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfxYXDr5FtlULxvAiImaRsGT-uPf0AQRH5g9uUDM_7srHnO9Q/formResponse";
 const FORM_ENTRY_TEXT = "entry.2086043965";
 const FORM_ENTRY_CHOICE = "entry.1720361206";
-const STORE_URL = "https://chromewebstore.google.com/";
+const STORE_SEARCH = "https://chromewebstore.google.com/search/Draw%20on%20Page%20Draw%20it%20son";
 
 const T = {
   en: {
@@ -194,7 +194,13 @@ const version = params.get("v") || "unknown";
 let lang = "en";
 let sent = false;
 
-document.getElementById("reinstall").href = STORE_URL;
+// The extension hands over its own id, so this links straight to the listing
+// once it is published. A Chrome id is always 32 letters a-p; anything else is
+// ignored so a hand-crafted url cannot bend the link somewhere odd.
+const extId = params.get("id") || "";
+document.getElementById("reinstall").href = /^[a-p]{32}$/.test(extId)
+  ? "https://chromewebstore.google.com/detail/" + extId
+  : STORE_SEARCH;
 
 function render() {
   const d = T[lang];

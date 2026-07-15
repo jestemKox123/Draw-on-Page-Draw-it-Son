@@ -139,7 +139,8 @@
 
 <script>
 const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfxYXDr5FtlULxvAiImaRsGT-uPf0AQRH5g9uUDM_7srHnO9Q/formResponse";
-const FORM_ENTRY = "entry.2086043965";
+const FORM_ENTRY_TEXT = "entry.2086043965";
+const FORM_ENTRY_CHOICE = "entry.1720361206";
 const STORE_URL = "https://chromewebstore.google.com/";
 
 const T = {
@@ -190,7 +191,7 @@ const REASONS = [
 
 const params = new URLSearchParams(location.search);
 const version = params.get("v") || "unknown";
-let lang = (navigator.language || "en").toLowerCase().startsWith("pl") ? "pl" : "en";
+let lang = "en";
 let sent = false;
 
 document.getElementById("reinstall").href = STORE_URL;
@@ -221,7 +222,9 @@ function send(canonical) {
   if (sent) return;
   sent = true;
   document.querySelectorAll(".reason").forEach(b => b.disabled = true);
-  const body = FORM_ENTRY + "=" + encodeURIComponent("[UNINSTALL v" + version + "] " + canonical);
+  const body =
+    FORM_ENTRY_CHOICE + "=" + encodeURIComponent(canonical) +
+    "&" + FORM_ENTRY_TEXT + "=" + encodeURIComponent("[UNINSTALL v" + version + "] " + canonical);
   fetch(FORM_URL, {
     method: "POST",
     mode: "no-cors",

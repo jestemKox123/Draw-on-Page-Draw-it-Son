@@ -191,7 +191,20 @@
         pointer-events: auto;
         display: none;
         user-select: none;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(167,139,250,.45) transparent;
       }
+      .panel::-webkit-scrollbar { width: 8px; }
+      .panel::-webkit-scrollbar-track { background: transparent; }
+      .panel::-webkit-scrollbar-thumb {
+        background: rgba(167,139,250,.4);
+        border-radius: 999px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+      }
+      .panel::-webkit-scrollbar-thumb:hover { background: rgba(167,139,250,.65); background-clip: padding-box; }
       .panel.open { display: block; }
       .panel h3 {
         margin: 0 0 14px; font-size: 11px; font-weight: 700; color: #8f86b3;
@@ -325,7 +338,11 @@
     sizeOverlay();
     const resizeObs = new ResizeObserver(sizeOverlay);
     resizeObs.observe(document.documentElement);
-    window.addEventListener("resize", sizeOverlay);
+    function onWindowResize() {
+      sizeOverlay();
+      positionPanel();
+    }
+    window.addEventListener("resize", onWindowResize);
 
     const icons = {
       cursor: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 3l14 8-6.5 1.5L9 19z"/></svg>',
@@ -602,17 +619,33 @@
       hint.textContent = t("reset_done");
     }
 
+    function positionPanel() {
+      if (!panel.classList.contains("open")) return;
+      const gap = 8;
+      const r = toolbar.getBoundingClientRect();
+
+      let left = r.left;
+      if (left + 250 > window.innerWidth - gap) left = window.innerWidth - 250 - gap;
+      panel.style.left = Math.round(Math.max(gap, left)) + "px";
+
+      const below = window.innerHeight - r.bottom - gap * 2;
+      const above = r.top - gap * 2;
+      panel.style.maxHeight = "none";
+      const wanted = panel.offsetHeight;
+      const openUp = wanted > below && above > below;
+      const room = Math.max(120, openUp ? above : below);
+      panel.style.maxHeight = room + "px";
+      const h = Math.min(wanted, room);
+      panel.style.top = Math.round(openUp ? Math.max(gap, r.top - gap - h) : r.bottom + gap) + "px";
+    }
+
     function togglePanel(open) {
       const willOpen = open === undefined ? !panel.classList.contains("open") : open;
       panel.classList.toggle("open", willOpen);
       gearBtn.classList.toggle("active", willOpen);
       if (willOpen) {
         refreshers.forEach(f => f());
-        const r = toolbar.getBoundingClientRect();
-        let left = r.left;
-        if (left + 250 > window.innerWidth - 8) left = window.innerWidth - 258;
-        panel.style.left = Math.round(Math.max(8, left)) + "px";
-        panel.style.top = Math.round(r.bottom + 8) + "px";
+        positionPanel();
       }
     }
     function closePanel() {
@@ -1251,7 +1284,7 @@
     const api = {
       destroy() {
         window.removeEventListener("keydown", onKeyDown, true);
-        window.removeEventListener("resize", sizeOverlay);
+        window.removeEventListener("resize", onWindowResize);
         try { chrome.storage.onChanged.removeListener(onStorageChanged); } catch (e) {}
         resizeObs.disconnect();
         host.style.transition = "opacity .15s ease";

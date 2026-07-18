@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Draw on Page — Draw it, son.</title>
+<meta name="description" content="Draw boxes, arrows, text and highlights on any web page. Blur sensitive info, drop numbered pins, save or copy a screenshot. Private by design.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✏️</text></svg>">
+<style>
+  :root {
+    --bg: #0b0912;
+    --card: #14111f;
+    --card2: #1b1830;
+    --ink: #e8e4f8;
+    --muted: #a79dcc;
+    --dim: #6f6791;
+    --purple: #a78bfa;
+    --purple2: #7c5cff;
+    --line: rgba(255,255,255,.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  .wrap { width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 22px; }
+
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(11,9,18,.72);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .row { display: flex; align-items: center; gap: 18px; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: -.02em; }
+  .brand .glyph {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: linear-gradient(135deg, #1a1730, #241d3f);
+    border: 1px solid rgba(167,139,250,.4);
+    display: grid; place-items: center;
+  }
+  .brand .glyph svg { width: 18px; height: 18px; }
+  .nav-links { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .nav-links a { color: var(--muted); font-size: 14px; font-weight: 600; padding: 8px 12px; border-radius: 9px; }
+  .nav-links a:hover { color: var(--ink); background: rgba(255,255,255,.05); }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font: inherit; font-weight: 700; cursor: pointer;
+    border: none; border-radius: 999px; padding: 11px 20px; font-size: 14px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--purple2), #a855f7);
+    color: #fff; box-shadow: 0 8px 26px rgba(124,92,255,.4);
+    transition: filter .15s, transform .1s;
+  }
+  .btn-primary:hover { filter: brightness(1.09); }
+  .btn-primary:active { transform: scale(.98); }
+  .btn-ghost {
+    background: rgba(255,255,255,.05); color: var(--ink);
+    border: 1px solid var(--line);
+    transition: background .15s;
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,.09); }
+
+  .langs { display: flex; align-items: center; gap: 4px; margin-left: 6px; }
+  .lang {
+    background: transparent; color: var(--dim);
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 5px 11px; font: inherit; font-size: 11.5px; font-weight: 800; cursor: pointer;
+  }
+  .lang:hover { color: var(--ink); }
+  .lang.active { background: rgba(124,92,255,.18); border-color: var(--purple2); color: var(--purple); }
+
+  .hero { position: relative; padding: 84px 0 30px; text-align: center; }
+  .hero::before {
+    content: ""; position: absolute; inset: -140px 0 auto 0; height: 620px; z-index: -1;
+    background: radial-gradient(760px 420px at 50% 0, rgba(124,92,255,.32) 0%, transparent 68%);
+  }
+  .kicker {
+    display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: 2.4px;
+    text-transform: uppercase; color: var(--purple);
+    border: 1px solid rgba(167,139,250,.3); border-radius: 999px; padding: 6px 15px; margin-bottom: 24px;
+  }
+  h1 { font-size: clamp(40px, 8vw, 74px); font-weight: 800; letter-spacing: -.035em; line-height: 1.03; }
+  h1 .son { background: linear-gradient(120deg, #c4b5fd, #7c5cff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero-sub { max-width: 620px; margin: 22px auto 34px; font-size: 18px; color: var(--muted); }
+  .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .hero-note { margin-top: 20px; font-size: 13px; color: var(--dim); }
+  .hero-note b { color: var(--purple); font-weight: 700; }
+
+  .demo { padding: 40px 0 20px; }
+  .demo-head { text-align: center; margin-bottom: 26px; }
+  .demo-head .eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--purple); }
+  .demo-head h2 { font-size: clamp(26px, 4vw, 38px); font-weight: 800; letter-spacing: -.02em; margin: 8px 0; }
+  .demo-head p { color: var(--muted); font-size: 15px; }
+
+  .stage {
+    position: relative;
+    background: linear-gradient(180deg, #17142a, #0f0d1a);
+    border: 1px solid var(--line);
+    border-radius: 20px; padding: 14px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.55);
+  }
+  .frame { border-radius: 13px; overflow: hidden; border: 1px solid rgba(255,255,255,.07); }
+  .frame-bar {
+    display: flex; align-items: center; gap: 8px;
+    background: #24222e; padding: 10px 14px;
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; } .dot.y { background: #febc2e; } .dot.g { background: #28c840; }
+  .url {
+    flex: 1; margin-left: 10px; height: 26px; border-radius: 7px;
+    background: #171620; color: #7b7591; font-size: 12px;
+    display: flex; align-items: center; padding: 0 12px; gap: 8px;
+  }
+  .url .lock { width: 11px; height: 11px; opacity: .6; }
+  .puzzle {
+    width: 26px; height: 26px; border-radius: 7px; background: #171620;
+    display: grid; place-items: center; position: relative;
+  }
+  .puzzle .ic { width: 16px; height: 16px; border-radius: 4px; background: linear-gradient(135deg, #7c5cff, #a855f7); display: grid; place-items: center; }
+  .puzzle .ic svg { width: 11px; height: 11px; }
+
+  .board {
+    position: relative; height: 460px;
+    background: #f5f6fb; overflow: hidden;
+    touch-action: none; user-select: none;
+  }
+  @media (max-width: 640px) { .board { height: 400px; } }
+
+  .mock { position: absolute; inset: 0; pointer-events: none; padding: 34px 40px; }
+  .mock .m-tag { font-size: 12px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase; color: #7c5cff; }
+  .mock h3 { color: #14121c; font-size: clamp(22px, 3.4vw, 34px); font-weight: 800; letter-spacing: -.02em; margin: 8px 0 10px; max-width: 460px; line-height: 1.12; }
+  .mock .m-lead { color: #55506b; font-size: 15px; max-width: 430px; }
+  .mock .m-cards { display: flex; gap: 14px; margin-top: 26px; flex-wrap: wrap; }
+  .mock .m-card { background: #fff; border: 1px solid #e7e6f0; border-radius: 13px; padding: 16px 18px; min-width: 132px; box-shadow: 0 8px 24px rgba(60,50,120,.07); }
+  .mock .m-card .big { font-size: 26px; font-weight: 800; color: #14121c; }
+  .mock .m-card .lbl { font-size: 12px; color: #8a85a0; margin-top: 2px; }
+  .mock .m-btn { display: inline-block; margin-top: 26px; background: linear-gradient(135deg, #7c5cff, #a855f7); color: #fff; font-weight: 700; font-size: 14px; border-radius: 999px; padding: 12px 24px; }
+
+  svg.ink { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .notes { position: absolute; inset: 0; pointer-events: none; }
+  .note {
+    position: absolute; pointer-events: auto; min-width: 12px;
+    font-family: "Inter", system-ui, sans-serif; font-weight: 700; font-size: 22px;
+    color: var(--purple); outline: none; white-space: pre; line-height: 1.2;
+    text-shadow: 0 1px 2px rgba(0,0,0,.15);
+  }
+  .capture { position: absolute; inset: 0; pointer-events: auto; cursor: crosshair; }
+  .board.cursor .capture { cursor: default; }
+  .board.text .capture { cursor: text; }
+  .board.drawing .notes { pointer-events: none; }
+
+  .hint {
+    position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%);
+    background: rgba(20,17,32,.92); color: #fff; font-size: 13px; font-weight: 600;
+    padding: 9px 16px; border-radius: 999px; display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.4); pointer-events: none;
+    transition: opacity .3s; z-index: 5;
+  }
+  .hint.gone { opacity: 0; }
+
+  .toolbar {
+    position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 5px; z-index: 6;
+    background: #1b1830; border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px; padding: 7px; box-shadow: 0 14px 34px rgba(0,0,0,.5);
+    max-width: calc(100% - 24px); flex-wrap: wrap; justify-content: center;
+  }
+  .tb {
+    width: 34px; height: 34px; border-radius: 9px; border: none; cursor: pointer;
+    background: transparent; color: #cfc8e8; display: grid; place-items: center;
+    transition: background .12s, color .12s;
+  }
+  .tb svg { width: 18px; height: 18px; }
+  .tb:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .tb.active { background: rgba(124,92,255,.9); color: #fff; }
+  .tb-sep { width: 1px; height: 22px; background: rgba(255,255,255,.14); margin: 0 3px; }
+  .sw { width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0; }
+  .sw.active { border-color: #fff; box-shadow: 0 0 0 2px rgba(124,92,255,.7); }
+
+  .features { padding: 70px 0 30px; }
+  .sec-head { text-align: center; max-width: 620px; margin: 0 auto 42px; }
+  .sec-head .eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--purple); }
+  .sec-head h2 { font-size: clamp(28px, 4.4vw, 42px); font-weight: 800; letter-spacing: -.025em; margin: 10px 0; }
+  .sec-head p { color: var(--muted); font-size: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 860px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+  .feat { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 24px; transition: border-color .18s, transform .18s; }
+  .feat:hover { border-color: rgba(167,139,250,.4); transform: translateY(-3px); }
+  .feat .fi { width: 42px; height: 42px; border-radius: 11px; background: rgba(124,92,255,.14); border: 1px solid rgba(167,139,250,.28); display: grid; place-items: center; margin-bottom: 15px; }
+  .feat .fi svg { width: 21px; height: 21px; color: var(--purple); }
+  .feat h3 { font-size: 17px; font-weight: 700; margin-bottom: 7px; }
+  .feat p { font-size: 14px; color: var(--muted); }
+
+  .privacy { padding: 40px 0 20px; }
+  .privacy-inner {
+    position: relative; overflow: hidden;
+    background: linear-gradient(140deg, #1a1533, #120f21);
+    border: 1px solid rgba(167,139,250,.24); border-radius: 22px;
+    padding: 50px clamp(24px, 5vw, 60px); text-align: center;
+  }
+  .privacy-inner::before { content: ""; position: absolute; inset: -60% 30% auto auto; width: 420px; height: 420px; background: radial-gradient(circle, rgba(124,92,255,.28), transparent 65%); }
+  .privacy .shield { font-size: 40px; margin-bottom: 14px; }
+  .privacy h2 { font-size: clamp(26px, 4vw, 40px); font-weight: 800; letter-spacing: -.025em; }
+  .privacy p { max-width: 620px; margin: 16px auto 26px; color: var(--muted); font-size: 16px; }
+  .checks { display: flex; flex-wrap: wrap; gap: 10px 22px; justify-content: center; }
+  .check { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #e0daf5; }
+  .check .c { color: #4ade80; font-weight: 800; }
+
+  .final { padding: 80px 0; text-align: center; }
+  .final h2 { font-size: clamp(30px, 5vw, 50px); font-weight: 800; letter-spacing: -.03em; }
+  .final h2 .son { background: linear-gradient(120deg, #c4b5fd, #7c5cff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .final p { color: var(--muted); font-size: 17px; margin: 16px auto 30px; max-width: 500px; }
+
+  footer { border-top: 1px solid var(--line); padding: 34px 0; }
+  footer .row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  footer .f-links { display: flex; gap: 20px; flex-wrap: wrap; }
+  footer a { color: var(--muted); font-size: 14px; }
+  footer a:hover { color: var(--ink); }
+  footer .copy { font-size: 13px; color: var(--dim); }
+</style>
+</head>
+<body>
+  <nav>
+    <div class="wrap row">
+      <a class="brand" href="#top">
+        <span class="glyph">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20C5 12 9 7 16 5"/><path d="M13 5h4v4"/></svg>
+        </span>
+        <span>Draw on Page</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features" data-i18n="nav_features">Features</a>
+        <a href="#privacy" data-i18n="nav_privacy">Privacy</a>
+        <a href="https://github.com/jestemKox123/Draw-on-Page-Draw-it-Son" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn btn-primary" id="cta-nav" href="#" target="_blank" rel="noopener" data-i18n="cta_add">Add to Chrome</a>
+        <div class="langs">
+          <button class="lang" data-lang="en">EN</button>
+          <button class="lang" data-lang="pl">PL</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <span id="top"></span>
+
+  <header class="hero">
+    <div class="wrap">
+      <span class="kicker" data-i18n="hero_kicker">Chrome extension · Free</span>
+      <h1>Draw on any page.<br><span class="son">Draw it, son.</span></h1>
+      <p class="hero-sub" data-i18n="hero_sub">Boxes, arrows, text and highlights on top of any website. Blur private info, drop numbered pins, then save or copy a screenshot — in seconds.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" id="cta-hero" href="#" target="_blank" rel="noopener" data-i18n="cta_add_store">Add to Chrome — it's free</a>
+        <a class="btn btn-ghost" href="#demo" data-i18n="cta_try">Try it right here ↓</a>
+      </div>
+      <p class="hero-note"><b data-i18n="hero_note_b">Private by design.</b> <span data-i18n="hero_note">No standing access to any site — it only runs when you click the icon.</span></p>
+    </div>
+  </header>
+
+  <section class="demo" id="demo">
+    <div class="wrap">
+      <div class="demo-head">
+        <div class="eyebrow" data-i18n="demo_eyebrow">Live demo</div>
+        <h2 data-i18n="demo_title">This board is real. Draw on it.</h2>
+        <p data-i18n="demo_sub">The same drawing engine that runs in the extension — pick a tool, pick a color, and go.</p>
+      </div>
+
+      <div class="stage">
+        <div class="frame">
+          <div class="frame-bar">
+            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+            <span class="url">
+              <svg class="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+              your-favorite-website.com
+            </span>
+            <span class="puzzle">
+              <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20C5 12 9 7 16 5"/><path d="M13 5h4v4"/></svg></span>
+            </span>
+          </div>
+
+          <div class="board cursor" id="board">
+            <div class="mock">
+              <div class="m-tag" data-i18n="mock_tag">Quarterly report</div>
+              <h3 data-i18n="mock_h">Everything is going great — probably.</h3>
+              <p class="m-lead" data-i18n="mock_lead">Circle the number that looks off. Arrow the button nobody clicks. Blur the email before you screenshot it. You know the drill.</p>
+              <div class="m-cards">
+                <div class="m-card"><div class="big">2,481</div><div class="lbl" data-i18n="mock_c1">Signups</div></div>
+                <div class="m-card"><div class="big">18%</div><div class="lbl" data-i18n="mock_c2">Conversion</div></div>
+                <div class="m-card"><div class="big">$9.2k</div><div class="lbl" data-i18n="mock_c3">Revenue</div></div>
+              </div>
+              <span class="m-btn" data-i18n="mock_btn">Get started</span>
+            </div>
+
+            <svg class="ink" id="ink"></svg>
+            <div class="notes" id="notes"></div>
+            <div class="capture" id="capture"></div>
+
+            <div class="toolbar" id="toolbar">
+              <button class="tb" data-tool="cursor" title="Move"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 3l14 8-6.5 1.5L9 19z"/></svg></button>
+              <button class="tb active" data-tool="pen" title="Pen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20l-5 1 1-5z"/></svg></button>
+              <button class="tb" data-tool="highlight" title="Highlighter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6 16l9-9 3 3-9 9H6z"/></svg></button>
+              <button class="tb" data-tool="rect" title="Box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="6" width="16" height="12" rx="2"/></svg></button>
+              <button class="tb" data-tool="arrow" title="Arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19L19 5"/><path d="M9 5h10v10"/></svg></button>
+              <button class="tb" data-tool="text" title="Text"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h14"/><path d="M12 6v13"/></svg></button>
+              <span class="tb-sep"></span>
+              <button class="sw active" data-color="#a78bfa" style="background:#a78bfa"></button>
+              <button class="sw" data-color="#f87171" style="background:#f87171"></button>
+              <button class="sw" data-color="#fb923c" style="background:#fb923c"></button>
+              <button class="sw" data-color="#facc15" style="background:#facc15"></button>
+              <button class="sw" data-color="#4ade80" style="background:#4ade80"></button>
+              <button class="sw" data-color="#38bdf8" style="background:#38bdf8"></button>
+              <button class="sw" data-color="#ffffff" style="background:#ffffff"></button>
+              <span class="tb-sep"></span>
+              <button class="tb" id="undo" title="Undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></button>
+              <button class="tb" id="clear" title="Clear"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M6 7l1 13h10l1-13"/></svg></button>
+            </div>
+
+            <div class="hint" id="hint">✏️ <span data-i18n="demo_hint">Draw anywhere on this board</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow" data-i18n="feat_eyebrow">Everything you need</div>
+        <h2 data-i18n="feat_title">One click, and the page is your canvas</h2>
+        <p data-i18n="feat_sub">No account, no setup. Click the icon and the toolbar appears — right where you're already looking.</p>
+      </div>
+      <div class="grid">
+        <div class="feat">
+          <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20l-5 1 1-5z"/></svg></div>
+          <h3 data-i18n="f1_t">Every tool you'd want</h3>
+          <p data-i18n="f1_d">Pen, highlighter, boxes, ellipses, arrows, lines and text — with adjustable thickness, opacity, custom colors and an eyedropper.</p>
+        </div>
+        <div class="feat">
+          <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 15s1.5-2 3-2 3 2 3 2"/><circle cx="9" cy="10" r="1"/><circle cx="15" cy="10" r="1"/></svg></div>
+          <h3 data-i18n="f2_t">Blur before you share</h3>
+          <p data-i18n="f2_d">Hide emails, names or card numbers with the redact tool, and drop numbered pins that count themselves for step-by-step guides.</p>
+        </div>
+        <div class="feat">
+          <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H4z"/><path d="M8 20h8"/><path d="M12 16v4"/></svg></div>
+          <h3 data-i18n="f3_t">Save it or copy it</h3>
+          <p data-i18n="f3_d">Save a PNG, copy straight to the clipboard, or export the whole scrolling page as one image. Your markup can come back next visit.</p>
+        </div>
+        <div class="feat">
+          <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></div>
+          <h3 data-i18n="f4_t">Laser pointer</h3>
+          <p data-i18n="f4_d">A glowing pointer for live presentations and screen recordings — nothing to draw, just guide the eye.</p>
+        </div>
+        <div class="feat">
+          <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v6l-6 4-6-4z"/><rect x="4" y="16" width="16" height="4" rx="1"/></svg></div>
+          <h3 data-i18n="f5_t">Keyboard shortcuts</h3>
+          <p data-i18n="f5_d">Alt+A to open, single keys to switch tools — and you can remap every one of them to whatever fits your hands.</p>
+        </div>
+        <div class="feat">
+          <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 5-3 8-7 9-4-1-7-4-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <h3 data-i18n="f6_t">Private by design</h3>
+          <p data-i18n="f6_d">No standing access to any site, no tracking, no accounts. It only runs after you click, and never reads or sends the pages you visit.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="privacy" id="privacy">
+    <div class="wrap">
+      <div class="privacy-inner">
+        <div class="shield">🛡️</div>
+        <h2 data-i18n="priv_title">Your pages stay yours</h2>
+        <p data-i18n="priv_sub">Most annotation extensions ask to read and change data on every site you visit. This one doesn't — it has no standing access to anything, and nothing ever leaves your device automatically.</p>
+        <div class="checks">
+          <span class="check"><span class="c">✓</span> <span data-i18n="priv_1">No data collected</span></span>
+          <span class="check"><span class="c">✓</span> <span data-i18n="priv_2">No tracking or analytics</span></span>
+          <span class="check"><span class="c">✓</span> <span data-i18n="priv_3">No accounts</span></span>
+          <span class="check"><span class="c">✓</span> <span data-i18n="priv_4">Runs only when you click</span></span>
+          <span class="check"><span class="c">✓</span> <span data-i18n="priv_5">Settings stay on your device</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="wrap">
+      <h2 data-i18n="final_title">Go on. <span class="son">Draw it, son.</span></h2>
+      <p data-i18n="final_sub">Free, private, and ready in one click. Add it to Chrome and start marking up the web.</p>
+      <a class="btn btn-primary" id="cta-final" href="#" target="_blank" rel="noopener" data-i18n="cta_add_store">Add to Chrome — it's free</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap row">
+      <div class="copy">Draw on Page · © 2026 romanzbudowy</div>
+      <div class="f-links">
+        <a href="https://github.com/jestemKox123/Draw-on-Page-Draw-it-Son" target="_blank" rel="noopener">GitHub</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="https://buymeacoffee.com/romanzbudowy" target="_blank" rel="noopener">Buy me a coffee</a>
+      </div>
+    </div>
+  </footer>
+
+<script>
+const STORE_ID = "hapoppndpojeilfgbjipggahdlbpignl";
+const STORE_URL = "https://chromewebstore.google.com/detail/" + STORE_ID;
+["cta-nav", "cta-hero", "cta-final"].forEach(function (id) {
+  var el = document.getElementById(id);
+  if (el) el.href = STORE_URL;
+});
+
+const T = {
+  en: {
+    nav_features: "Features", nav_privacy: "Privacy", cta_add: "Add to Chrome",
+    cta_add_store: "Add to Chrome — it's free", cta_try: "Try it right here ↓",
+    hero_kicker: "Chrome extension · Free",
+    hero_sub: "Boxes, arrows, text and highlights on top of any website. Blur private info, drop numbered pins, then save or copy a screenshot — in seconds.",
+    hero_note_b: "Private by design.", hero_note: "No standing access to any site — it only runs when you click the icon.",
+    demo_eyebrow: "Live demo", demo_title: "This board is real. Draw on it.",
+    demo_sub: "The same drawing engine that runs in the extension — pick a tool, pick a color, and go.",
+    demo_hint: "Draw anywhere on this board",
+    mock_tag: "Quarterly report", mock_h: "Everything is going great — probably.",
+    mock_lead: "Circle the number that looks off. Arrow the button nobody clicks. Blur the email before you screenshot it. You know the drill.",
+    mock_c1: "Signups", mock_c2: "Conversion", mock_c3: "Revenue", mock_btn: "Get started",
+    feat_eyebrow: "Everything you need", feat_title: "One click, and the page is your canvas",
+    feat_sub: "No account, no setup. Click the icon and the toolbar appears — right where you're already looking.",
+    f1_t: "Every tool you'd want", f1_d: "Pen, highlighter, boxes, ellipses, arrows, lines and text — with adjustable thickness, opacity, custom colors and an eyedropper.",
+    f2_t: "Blur before you share", f2_d: "Hide emails, names or card numbers with the redact tool, and drop numbered pins that count themselves for step-by-step guides.",
+    f3_t: "Save it or copy it", f3_d: "Save a PNG, copy straight to the clipboard, or export the whole scrolling page as one image. Your markup can come back next visit.",
+    f4_t: "Laser pointer", f4_d: "A glowing pointer for live presentations and screen recordings — nothing to draw, just guide the eye.",
+    f5_t: "Keyboard shortcuts", f5_d: "Alt+A to open, single keys to switch tools — and you can remap every one of them to whatever fits your hands.",
+    f6_t: "Private by design", f6_d: "No standing access to any site, no tracking, no accounts. It only runs after you click, and never reads or sends the pages you visit.",
+    priv_title: "Your pages stay yours",
+    priv_sub: "Most annotation extensions ask to read and change data on every site you visit. This one doesn't — it has no standing access to anything, and nothing ever leaves your device automatically.",
+    priv_1: "No data collected", priv_2: "No tracking or analytics", priv_3: "No accounts", priv_4: "Runs only when you click", priv_5: "Settings stay on your device",
+    final_title_html: 'Go on. <span class="son">Draw it, son.</span>',
+    final_sub: "Free, private, and ready in one click. Add it to Chrome and start marking up the web."
+  },
+  pl: {
+    nav_features: "Funkcje", nav_privacy: "Prywatność", cta_add: "Dodaj do Chrome",
+    cta_add_store: "Dodaj do Chrome — za darmo", cta_try: "Wypróbuj tutaj ↓",
+    hero_kicker: "Rozszerzenie Chrome · Za darmo",
+    hero_sub: "Ramki, strzałki, tekst i zakreślenia na każdej stronie. Rozmywaj prywatne dane, stawiaj numerowane pinezki, potem zapisz albo skopiuj zrzut — w kilka sekund.",
+    hero_note_b: "Prywatność od podstaw.", hero_note: "Żadnego stałego dostępu do stron — działa dopiero, gdy klikniesz ikonę.",
+    demo_eyebrow: "Demo na żywo", demo_title: "Ta plansza jest prawdziwa. Rysuj po niej.",
+    demo_sub: "Ten sam silnik rysowania co w rozszerzeniu — wybierz narzędzie, wybierz kolor i działaj.",
+    demo_hint: "Rysuj w dowolnym miejscu planszy",
+    mock_tag: "Raport kwartalny", mock_h: "Wszystko idzie świetnie — chyba.",
+    mock_lead: "Zakreśl liczbę, która wygląda źle. Wskaż strzałką przycisk, którego nikt nie klika. Zamaż e-mail, zanim zrobisz zrzut. Znasz to.",
+    mock_c1: "Rejestracje", mock_c2: "Konwersja", mock_c3: "Przychód", mock_btn: "Zacznij",
+    feat_eyebrow: "Wszystko, czego potrzebujesz", feat_title: "Jedno kliknięcie i strona staje się płótnem",
+    feat_sub: "Bez konta, bez konfiguracji. Kliknij ikonę, a pasek narzędzi pojawi się dokładnie tam, gdzie patrzysz.",
+    f1_t: "Każde narzędzie, jakie chcesz", f1_d: "Pióro, zakreślacz, ramki, elipsy, strzałki, linie i tekst — z regulacją grubości, krycia, własnymi kolorami i pipetą.",
+    f2_t: "Zamaż, zanim udostępnisz", f2_d: "Ukryj e-maile, nazwiska czy numery kart narzędziem rozmycia i stawiaj numerowane pinezki, które same się liczą — do instrukcji krok po kroku.",
+    f3_t: "Zapisz albo skopiuj", f3_d: "Zapisz PNG, skopiuj prosto do schowka albo wyeksportuj całą przewijaną stronę w jednym obrazie. Rysunki mogą wrócić przy następnej wizycie.",
+    f4_t: "Wskaźnik laserowy", f4_d: "Świecący wskaźnik do prezentacji na żywo i nagrań ekranu — nic nie rysuje, po prostu prowadzi wzrok.",
+    f5_t: "Skróty klawiszowe", f5_d: "Alt+A, by otworzyć, pojedyncze klawisze do zmiany narzędzi — i każdy z nich przypiszesz po swojemu.",
+    f6_t: "Prywatność od podstaw", f6_d: "Żadnego stałego dostępu do stron, śledzenia ani kont. Działa dopiero po kliknięciu i nigdy nie czyta ani nie wysyła odwiedzanych stron.",
+    priv_title: "Twoje strony zostają Twoje",
+    priv_sub: "Większość wtyczek do adnotacji prosi o prawo odczytu i zmiany danych na każdej stronie. Ta nie — nie ma stałego dostępu do niczego, a nic nie opuszcza Twojego urządzenia automatycznie.",
+    priv_1: "Zero zbieranych danych", priv_2: "Bez śledzenia i analityki", priv_3: "Bez kont", priv_4: "Działa tylko po kliknięciu", priv_5: "Ustawienia zostają u Ciebie",
+    final_title_html: 'No dawaj. <span class="son">Draw it, son.</span>',
+    final_sub: "Za darmo, prywatnie i gotowe w jednym kliknięciu. Dodaj do Chrome i zacznij pisać po sieci."
+  }
+};
+
+let lang = "en";
+function applyLang(l) {
+  lang = l;
+  const d = T[l];
+  document.querySelectorAll("[data-i18n]").forEach(function (el) {
+    const v = d[el.dataset.i18n];
+    if (v) el.textContent = v;
+  });
+  document.querySelector(".final h2").innerHTML = d.final_title_html;
+  document.documentElement.lang = l;
+  document.querySelectorAll(".lang").forEach(function (b) {
+    b.classList.toggle("active", b.dataset.lang === l);
+  });
+}
+document.querySelectorAll(".lang").forEach(function (b) {
+  b.addEventListener("click", function () { applyLang(b.dataset.lang); });
+});
+applyLang((navigator.language || "en").toLowerCase().startsWith("pl") ? "pl" : "en");
+
+const NS = "http://www.w3.org/2000/svg";
+const board = document.getElementById("board");
+const ink = document.getElementById("ink");
+const notes = document.getElementById("notes");
+const capture = document.getElementById("capture");
+const hint = document.getElementById("hint");
+
+let tool = "pen";
+let color = "#a78bfa";
+const stack = [];
+let drawing = false;
+let temp = null;
+let pts = [];
+let sx = 0, sy = 0;
+
+const DRAW_TOOLS = ["pen", "highlight", "rect", "arrow"];
+
+function setTool(t) {
+  tool = t;
+  document.querySelectorAll(".tb[data-tool]").forEach(function (b) {
+    b.classList.toggle("active", b.dataset.tool === t);
+  });
+  board.classList.toggle("cursor", t === "cursor");
+  board.classList.toggle("text", t === "text");
+  board.classList.toggle("drawing", DRAW_TOOLS.indexOf(t) !== -1);
+}
+document.querySelectorAll(".tb[data-tool]").forEach(function (b) {
+  b.addEventListener("click", function () { setTool(b.dataset.tool); });
+});
+document.querySelectorAll(".sw").forEach(function (b) {
+  b.addEventListener("click", function () {
+    color = b.dataset.color;
+    document.querySelectorAll(".sw").forEach(function (s) { s.classList.remove("active"); });
+    b.classList.add("active");
+  });
+});
+
+function hideHint() { hint.classList.add("gone"); }
+function push(el) { stack.push(el); hideHint(); }
+
+document.getElementById("undo").addEventListener("click", function () {
+  const el = stack.pop();
+  if (el && el.parentNode) el.parentNode.removeChild(el);
+});
+document.getElementById("clear").addEventListener("click", function () {
+  stack.length = 0;
+  ink.replaceChildren();
+  notes.replaceChildren();
+});
+
+function pt(e) {
+  const r = board.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+function el(tag, attrs) {
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  return n;
+}
+function penD(points) {
+  if (points.length < 2) return "M " + points[0].x + " " + points[0].y + " L " + points[0].x + " " + points[0].y;
+  let d = "M " + points[0].x + " " + points[0].y;
+  for (let i = 1; i < points.length - 1; i++) {
+    const xc = (points[i].x + points[i + 1].x) / 2;
+    const yc = (points[i].y + points[i + 1].y) / 2;
+    d += " Q " + points[i].x + " " + points[i].y + " " + xc + " " + yc;
+  }
+  const last = points[points.length - 1];
+  return d + " L " + last.x + " " + last.y;
+}
+function arrowPoly(x1, y1, x2, y2, size) {
+  const ang = Math.atan2(y2 - y1, x2 - x1);
+  const a1 = ang + Math.PI - 0.42, a2 = ang + Math.PI + 0.42;
+  return x2 + "," + y2 + " " +
+    (x2 + Math.cos(a1) * size) + "," + (y2 + Math.sin(a1) * size) + " " +
+    (x2 + Math.cos(a2) * size) + "," + (y2 + Math.sin(a2) * size);
+}
+
+function placeText(p) {
+  const div = document.createElement("div");
+  div.className = "note";
+  div.contentEditable = "true";
+  div.style.left = p.x + "px";
+  div.style.top = p.y + "px";
+  div.style.color = color;
+  notes.appendChild(div);
+  push(div);
+  setTimeout(function () { div.focus(); }, 0);
+  div.addEventListener("blur", function () {
+    if (!div.textContent.trim()) {
+      const i = stack.indexOf(div);
+      if (i !== -1) stack.splice(i, 1);
+      if (div.parentNode) div.parentNode.removeChild(div);
+    }
+  });
+}
+
+capture.addEventListener("pointerdown", function (e) {
+  if (tool === "cursor") return;
+  const p = pt(e);
+  if (tool === "text") { placeText(p); return; }
+  drawing = true;
+  sx = p.x; sy = p.y;
+  capture.setPointerCapture(e.pointerId);
+
+  if (tool === "pen" || tool === "highlight") {
+    pts = [p];
+    const hi = tool === "highlight";
+    temp = el("path", {
+      d: penD(pts), fill: "none", stroke: color,
+      "stroke-width": hi ? 20 : 4,
+      "stroke-linecap": "round", "stroke-linejoin": "round",
+      opacity: hi ? 0.32 : 1
+    });
+  } else if (tool === "rect") {
+    temp = el("rect", { x: p.x, y: p.y, width: 0, height: 0, rx: 6, fill: "none", stroke: color, "stroke-width": 3.5 });
+  } else if (tool === "arrow") {
+    temp = el("g", {});
+    const line = el("line", { x1: sx, y1: sy, x2: sx, y2: sy, stroke: color, "stroke-width": 3.5, "stroke-linecap": "round" });
+    const head = el("polygon", { points: arrowPoly(sx, sy, sx, sy, 16), fill: color });
+    temp.appendChild(line); temp.appendChild(head);
+  }
+  if (temp) ink.appendChild(temp);
+});
+
+capture.addEventListener("pointermove", function (e) {
+  if (!drawing || !temp) return;
+  const p = pt(e);
+  if (tool === "pen" || tool === "highlight") {
+    pts.push(p);
+    temp.setAttribute("d", penD(pts));
+  } else if (tool === "rect") {
+    temp.setAttribute("x", Math.min(sx, p.x));
+    temp.setAttribute("y", Math.min(sy, p.y));
+    temp.setAttribute("width", Math.abs(p.x - sx));
+    temp.setAttribute("height", Math.abs(p.y - sy));
+  } else if (tool === "arrow") {
+    const line = temp.firstChild, head = temp.lastChild;
+    line.setAttribute("x2", p.x); line.setAttribute("y2", p.y);
+    head.setAttribute("points", arrowPoly(sx, sy, p.x, p.y, 16));
+  }
+});
+
+function endDraw() {
+  if (!drawing) return;
+  drawing = false;
+  if (temp) {
+    if (tool === "rect" && (Math.abs(temp.getAttribute("width")) < 3)) {
+      temp.remove();
+    } else {
+      push(temp);
+    }
+  }
+  temp = null;
+}
+capture.addEventListener("pointerup", endDraw);
+capture.addEventListener("pointercancel", endDraw);
+capture.addEventListener("pointerleave", endDraw);
+</script>
+</body>
+</html>
